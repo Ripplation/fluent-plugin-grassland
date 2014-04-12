@@ -2,7 +2,7 @@
 
 Output filter plugin for Grassland
 
-[![Gem Version](https://badge.fury.io/rb/fluent-plugin-kinesis-alt.png)](http://badge.fury.io/rb/fluent-plugin-kinesis-alt)
+[![Gem Version](https://badge.fury.io/rb/fluent-plugin-grassland.svg)](http://badge.fury.io/rb/fluent-plugin-grassland)
 
 ## Notice
 

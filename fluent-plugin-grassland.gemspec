@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   # spec.email         = ['xxxxxx@ripplation.co.jp']
   spec.description   = 'Output filter plugin for Grassland'
   spec.summary       = 'Output filter plugin for Grassland'
-  spec.homepage      = 'https://bitbucket.org/winebarrel/fluent-plugin-kinesis-alt'
+  spec.homepage      = 'https://www.ripplation.co.jp'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files`.split($/)
