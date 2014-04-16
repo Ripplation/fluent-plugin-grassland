@@ -6,27 +6,39 @@ Output filter plugin for Grassland
 
 ## Notice
 
-maybe write after.
+本アプリケーションはFluentdのGrassland用プラグインです。
+[Fluentdをインストール](http://docs.fluentd.org/categories/installation)してからご利用下さい。
 
 ## Installation
-* It still not working
 
-Add this line to your application's Gemfile:
+__Gemfileに記載する場合__
+
+まずGemfileに以下を追記します。
 
     gem 'fluent-plugin-grassland'
 
-And then execute:
+次に以下のコマンドを実行します。
 
     $ bundle
 
-Or install it yourself as:
+__直接インストールする場合__
+
+以下のコマンドにて、インストールして下さい。
 
     $ gem install fluent-plugin-grassland
+
+__Red Hat系OSでtd-agentを利用している場合__
+
+fluent-gemでインストールします。
+注意： fluent-gemのパスは環境によって異なります。
+
+    $ /usr/lib64/fluent/ruby/bin/fluent-gem install fluent-plugin-grassland
 
 ## Usage
 
 ### Configuration
 
+__Fluentdの設定ファイルに以下を追記します。__
 ```
 <match kinesis.**>
   type grassland

@@ -2,7 +2,7 @@ module Fluent
   class GrasslandOutput < Fluent::BufferedOutput
     Fluent::Plugin.register_output('grassland', self)
 
-    attr_accessor :apiuri, :stream_name, :access_key_id, :secret_access_key, :region
+    attr_accessor :stream_name, :access_key_id, :secret_access_key, :region
 
     def initialize
       super
@@ -12,11 +12,11 @@ module Fluent
       require 'logger'
       require 'net/http'
       require 'uri'
-      @apiuri = 'https://s3.amazonaws.com/apicre/credential.json'
     end
 
-    config_param :key,   :string, :default => nil
-    config_param :debug, :bool, :default => false
+    config_param :apiuri,   :string, :default => 'https://grassland-api.elasticbeanstalk.com/credential'
+    config_param :key,      :string, :default => 'nil'
+    config_param :debug,    :bool, :default => false
 
     def configure(conf)
       super
@@ -44,7 +44,7 @@ module Fluent
     end
 
     def setCredential()
-      credential = get_json(@apiuri)
+      credential = get_json("#{@apiuri}?key=#{@key}")
       @stream_name = credential['streamName']
       @access_key_id = credential['accessKeyId']
       @secret_access_key = credential['secretAccessKey']
@@ -80,11 +80,14 @@ module Fluent
 
     def format(tag, time, record)
       # print(record)
-      ['cid', 'dt', 'uid', 'pt', 'd'].each do |key|
+      ['cid', 'dt', 'uid', 'd'].each do |key|
         unless record.has_key?(key)
           puts "input data error: '#{key}' is required"
           return ""
         end
+      end
+      unless record.has_key?('pt')
+        record['pt'] = time
       end
 
       record['pk'] = record['cid'] + record['dt']
