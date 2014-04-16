@@ -58,7 +58,7 @@ __Fluentdの設定ファイルに以下を追記します。__
 
 __1. [fluent-logger-phpをインストール](https://github.com/fluent/fluent-logger-php)して下さい。__
 ```
-cat > composer.json << EOF
+cat >> composer.json << EOF
 {
     "require": {
         "fluent/logger": "v0.3.7"
