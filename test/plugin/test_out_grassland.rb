@@ -1,6 +1,6 @@
 require 'helper'
 
-class KinesisAltOutputTest < Test::Unit::TestCase
+class GrasslandOutputTest < Test::Unit::TestCase
   def setup
     Fluent::Test.setup
   end
@@ -14,7 +14,7 @@ class KinesisAltOutputTest < Test::Unit::TestCase
   # ]
 
   def create_driver(conf = CONFIG, tag='test')
-    Fluent::Test::BufferedOutputTestDriver.new(Fluent::KinesisAltOutput, tag).configure(conf)
+    Fluent::Test::BufferedOutputTestDriver.new(Fluent::GrasslandOutput, tag).configure(conf)
   end
 
   def test_configure
