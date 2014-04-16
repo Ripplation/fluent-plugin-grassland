@@ -5,6 +5,7 @@ Output filter plugin for Grassland
 [![Gem Version](https://badge.fury.io/rb/fluent-plugin-grassland.svg)](http://badge.fury.io/rb/fluent-plugin-grassland)
 
 ## Notice
+* このアプリケーションはまだテスト中です。
 
 本アプリケーションはFluentdのGrassland用プラグインです。
 [Fluentdをインストール](http://docs.fluentd.org/categories/installation)してからご利用下さい。
@@ -40,7 +41,7 @@ fluent-gemでインストールします。
 
 __Fluentdの設定ファイルに以下を追記します。__
 ```
-<match kinesis.**>
+<match grassland.**>
   type grassland
   key xxxxxxxxxxxxxxxx
   flush_interval 3
