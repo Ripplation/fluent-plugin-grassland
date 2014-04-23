@@ -85,12 +85,33 @@ $param = array(
 	'cid' => 'お客様ID',
 	'dt' => 'データID',
 	'uid' => 'お客様のサービスのユーザID',
-	'pt' => '(optional)データの発生時刻(ISO 8601準拠の文字列か、Unix Timestamp)',
+	'pt' => '(optional)データの発生時刻(ISO 8601準拠の文字列, Ex. "2014-04-01T12:00:00+09:00")',
 	'd' => array(
-		'd1' => '集計を行いたいデータ',
-		'd2' => '(optional)集計を行いたいデータ',
-		'd3' => '(以降、同様に最大10個まで追加可能)'
+		'任意のキー' => '集計を行いたいデータ',
+		'任意のキー' => '(optional)集計を行いたいデータ',
+		'任意のキー' => '(以降、同様に最大10個まで追加可能)'
 	)
+);
+$logger->post("grassland.data", $param);
+```
+ 
+ptを省略した場合、fluentdが受け付けた時間のUTC時刻として入力されます。 
+「任意のキー」は、グラフに表示される一つの要素になります。 
+例を以下に示します。 
+
+```
+//timezone設定
+date_default_timezone_set('Asia/Tokyo');
+
+$param = array(
+  'cid' => 'cid0000001',
+  'dt' => 'd822fab12eeb4db997db87876a082d82',
+  'uid' => 'user001',
+  'pt' => date( DATE_ISO8601, time() ),
+  'd' => array(
+    'item1' => '100',
+    'item2' => '200'
+  )
 );
 $logger->post("grassland.data", $param);
 ```
