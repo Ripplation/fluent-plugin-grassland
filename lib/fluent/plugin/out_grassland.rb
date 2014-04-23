@@ -100,30 +100,34 @@ module Fluent
       putBuf = ""
       bufList = {}
 
-      dataList.each do |data|
-        if bufList[":#{data['pk']}"] == nil then
-          bufList[":#{data['pk']}"] = "#{data.to_json},"
-        else
-          bufList[":#{data['pk']}"] += "#{data.to_json},"
+      begin
+        dataList.each do |data|
+          if bufList[":#{data['pk']}"] == nil then
+            bufList[":#{data['pk']}"] = "#{data.to_json},"
+          else
+            bufList[":#{data['pk']}"] += "#{data.to_json},"
+          end
+          if bufList[":#{data['pk']}"].bytesize >= 30720 then
+            AWS.kinesis.client.put_record({
+              :stream_name   => @stream_name,
+              :data          => "["+bufList[":#{data['pk']}"].chop+"]",
+              :partition_key => data['pk']
+            })
+            bufList.delete(":#{data['pk']}")
+          end
         end
-        if bufList[":#{data['pk']}"].bytesize >= 30720 then
-          AWS.kinesis.client.put_record({
-            :stream_name   => @stream_name,
-            :data          => "["+bufList[":#{data['pk']}"].chop+"]",
-            :partition_key => data['pk']
-          })
-          bufList.delete(":#{data['pk']}")
+        dataList.each do |data|
+          if bufList[":#{data['pk']}"] != nil then
+            AWS.kinesis.client.put_record({
+              :stream_name   => @stream_name,
+              :data          => "["+bufList[":#{data['pk']}"].chop+"]",
+              :partition_key => data['pk']
+            })
+            bufList.delete(":#{data['pk']}")
+          end
         end
-      end
-      dataList.each do |data|
-        if bufList[":#{data['pk']}"] != nil then
-          AWS.kinesis.client.put_record({
-            :stream_name   => @stream_name,
-            :data          => "["+bufList[":#{data['pk']}"].chop+"]",
-            :partition_key => data['pk']
-          })
-          bufList.delete(":#{data['pk']}")
-        end
+      rescue
+        puts "error: put_record to grassland. maybe too many requests. few data dropped."
       end
     end
 
