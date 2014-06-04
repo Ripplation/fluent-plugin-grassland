@@ -47,9 +47,9 @@ module Fluent
     def start
       super
       puts "test log: start"
-      set_interval(@resetCredentialTimer){
-        resetAwsCredential
-      }
+      # set_interval(@resetCredentialTimer){
+      #   resetAwsCredential
+      # }
       # EM.run do
       #   EM.add_periodic_timer(@resetCredentialTimer) do
       #     resetAwsCredential
