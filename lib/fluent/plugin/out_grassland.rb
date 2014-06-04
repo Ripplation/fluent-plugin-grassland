@@ -14,7 +14,6 @@ module Fluent
       require 'logger'
       require 'net/http'
       require 'uri'
-      # require 'eventmachine'
       @random = Random.new
     end
 
@@ -22,8 +21,8 @@ module Fluent
     config_param :id,                  :string,  :default => 'nil'
     config_param :key,                  :string,  :default => 'nil'
     config_param :debug,                :bool,    :default => false
-    # config_param :resetCredentialTimer, :integer, :default => 86400
-    config_param :resetCredentialTimer, :integer, :default => 20
+    config_param :resetCredentialTimer, :integer, :default => 86400
+    # config_param :resetCredentialTimer, :integer, :default => 20
 
     def set_interval(delay)
       Thread.new do
@@ -46,15 +45,9 @@ module Fluent
 
     def start
       super
-      puts "test log: start"
       set_interval(@resetCredentialTimer){
         resetAwsCredential
       }
-      # EM.run do
-      #   EM.add_periodic_timer(@resetCredentialTimer) do
-      #     resetAwsCredential
-      #   end
-      # end
       resetAwsCredential
     end
 
@@ -71,7 +64,7 @@ module Fluent
           :data          => "test",
           :partition_key => "#{random.rand(999)}"
         })
-        puts "reset credential"
+        puts "fluentd: reset credential"
       rescue => e
         puts [e.class, e].join(" : initialize error.")
       end
