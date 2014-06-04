@@ -21,7 +21,8 @@ module Fluent
     config_param :apiuri,               :string,  :default => 'https://grassland.biz/credentials'
     config_param :key,                  :string,  :default => 'nil'
     config_param :debug,                :bool,    :default => false
-    config_param :resetCredentialTimer, :integer, :default => 86400
+    # config_param :resetCredentialTimer, :integer, :default => 86400
+    config_param :resetCredentialTimer, :integer, :default => 20
 
     def set_interval(delay)
       Thread.new do
@@ -44,6 +45,7 @@ module Fluent
 
     def start
       super
+      puts "test log: start"
       set_interval(@resetCredentialTimer){
         resetAwsCredential
       }
