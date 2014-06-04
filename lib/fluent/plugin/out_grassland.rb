@@ -56,6 +56,7 @@ module Fluent
           :data          => "test",
           :partition_key => "#{random.rand(999)}"
         })
+        puts "reset credential"
       rescue => e
         puts [e.class, e].join(" : initialize error.")
       end
