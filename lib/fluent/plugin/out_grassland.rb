@@ -2,7 +2,9 @@ module Fluent
   class GrasslandOutput < Fluent::BufferedOutput
     Fluent::Plugin.register_output('grassland', self)
 
-    attr_accessor :stream_name, :access_key_id, :secret_access_key, :region
+    attr_accessor :random
+    attr_accessor :kinesis
+    attr_accessor :stream_name, :access_key_id, :secret_access_key, :region, :sessionToken, :partitionKeys
 
     def initialize
       super
@@ -12,11 +14,14 @@ module Fluent
       require 'logger'
       require 'net/http'
       require 'uri'
+      require 'eventmachine'
+      @random = Random.new
     end
 
-    config_param :apiuri,   :string, :default => 'https://grassland-api.elasticbeanstalk.com/credential'
-    config_param :key,      :string, :default => 'nil'
-    config_param :debug,    :bool, :default => false
+    config_param :apiuri,               :string,  :default => 'https://grassland.biz/credentials'
+    config_param :key,                  :string,  :default => 'nil'
+    config_param :debug,                :bool,    :default => false
+    config_param :resetCredentialTimer, :integer, :default => 86400
 
     def configure(conf)
       super
@@ -30,17 +35,30 @@ module Fluent
 
     def start
       super
-      setCredential
-      configure_aws
-      AWS.kinesis.client.put_record({
-        :stream_name   => @stream_name,
-        :data          => "test",
-        :partition_key => "#{rand(999)}"
-      })
+      EventMachine.run do
+        EventMachine.add_periodic_timer(@resetCredentialTimer) do
+          resetAwsCredential
+        end
+      end
+      resetAwsCredential
     end
 
     def shutdown
       super
+    end
+
+    def resetAwsCredential()
+      begin
+        setCredential
+        configure_aws
+        AWS.kinesis.client.put_record({
+          :stream_name   => @stream_name,
+          :data          => "test",
+          :partition_key => "#{random.rand(999)}"
+        })
+      rescue => e
+        puts [e.class, e].join(" : initialize error.")
+      end
     end
 
     def setCredential()
@@ -49,6 +67,8 @@ module Fluent
       @access_key_id = credential['accessKeyId']
       @secret_access_key = credential['secretAccessKey']
       @region = credential['region']
+      @sessionToken = credential['SessionToken']
+      @partitionKeys = credential['SessionToken']
     end
 
     def get_json(location, limit = 3)
@@ -111,7 +131,8 @@ module Fluent
             AWS.kinesis.client.put_record({
               :stream_name   => @stream_name,
               :data          => "["+bufList[":#{data['pk']}"].chop+"]",
-              :partition_key => data['pk']
+              :partition_key => partitionKeys[random.rand(partitionKeys.length)]
+              # :partition_key => data['pk']
             })
             bufList.delete(":#{data['pk']}")
           end
@@ -121,7 +142,8 @@ module Fluent
             AWS.kinesis.client.put_record({
               :stream_name   => @stream_name,
               :data          => "["+bufList[":#{data['pk']}"].chop+"]",
-              :partition_key => data['pk']
+              :partition_key => partitionKeys[random.rand(partitionKeys.length)]
+              # :partition_key => data['pk']
             })
             bufList.delete(":#{data['pk']}")
           end
@@ -137,7 +159,8 @@ module Fluent
       options = {
         :access_key_id     => @access_key_id,
         :secret_access_key => @secret_access_key,
-        :region            => @region
+        :region            => @region,
+        :session_token     => @sessionToken
       }
 
       if @debug
