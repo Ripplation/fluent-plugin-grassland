@@ -22,8 +22,8 @@ module Fluent
     config_param :id,                  :string,  :default => 'nil'
     config_param :key,                  :string,  :default => 'nil'
     config_param :debug,                :bool,    :default => false
-    config_param :resetCredentialTimer, :integer, :default => 86400
-    # config_param :resetCredentialTimer, :integer, :default => 20
+    # config_param :resetCredentialTimer, :integer, :default => 86400
+    config_param :resetCredentialTimer, :integer, :default => 20
 
     def set_interval(delay)
       Thread.new do
