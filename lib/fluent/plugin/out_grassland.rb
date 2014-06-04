@@ -35,8 +35,8 @@ module Fluent
 
     def start
       super
-      EventMachine.run do
-        EventMachine.add_periodic_timer(@resetCredentialTimer) do
+      EM.run do
+        EM.add_periodic_timer(@resetCredentialTimer) do
           resetAwsCredential
         end
       end
