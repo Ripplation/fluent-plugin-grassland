@@ -14,7 +14,7 @@ module Fluent
       require 'logger'
       require 'net/http'
       require 'uri'
-      require 'eventmachine'
+      # require 'eventmachine'
       @random = Random.new
     end
 
@@ -22,6 +22,15 @@ module Fluent
     config_param :key,                  :string,  :default => 'nil'
     config_param :debug,                :bool,    :default => false
     config_param :resetCredentialTimer, :integer, :default => 86400
+
+    def set_interval(delay)
+      Thread.new do
+        loop do
+          sleep delay
+          yield # call passed block
+        end
+      end
+    end
 
     def configure(conf)
       super
@@ -35,11 +44,14 @@ module Fluent
 
     def start
       super
-      EM.run do
-        EM.add_periodic_timer(@resetCredentialTimer) do
-          resetAwsCredential
-        end
-      end
+      set_interval(@resetCredentialTimer){
+        resetAwsCredential
+      }
+      # EM.run do
+      #   EM.add_periodic_timer(@resetCredentialTimer) do
+      #     resetAwsCredential
+      #   end
+      # end
       resetAwsCredential
     end
 
