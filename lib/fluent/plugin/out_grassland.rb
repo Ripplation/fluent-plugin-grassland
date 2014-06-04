@@ -19,10 +19,11 @@ module Fluent
     end
 
     config_param :apiuri,               :string,  :default => 'https://grassland.biz/credentials'
+    config_param :id,                  :string,  :default => 'nil'
     config_param :key,                  :string,  :default => 'nil'
     config_param :debug,                :bool,    :default => false
-    # config_param :resetCredentialTimer, :integer, :default => 86400
-    config_param :resetCredentialTimer, :integer, :default => 20
+    config_param :resetCredentialTimer, :integer, :default => 86400
+    # config_param :resetCredentialTimer, :integer, :default => 20
 
     def set_interval(delay)
       Thread.new do
@@ -115,7 +116,7 @@ module Fluent
 
     def format(tag, time, record)
       # print(record)
-      ['cid', 'dt', 'uid', 'd'].each do |key|
+      ['dt', 'uid', 'd'].each do |key|
         unless record.has_key?(key)
           puts "input data error: '#{key}' is required"
           return ""
@@ -123,6 +124,9 @@ module Fluent
       end
       unless record.has_key?('pt')
         record['pt'] = time
+      end
+      unless record.has_key?('cid')
+        record['cid'] = @id
       end
 
       record['pk'] = record['cid'] + record['dt']
