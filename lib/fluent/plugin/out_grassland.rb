@@ -14,7 +14,7 @@ module Fluent
       require 'logger'
       require 'net/http'
       require 'uri'
-      require 'eventmachine'
+      # require 'eventmachine'
       @random = Random.new
     end
 
@@ -47,14 +47,14 @@ module Fluent
     def start
       super
       puts "test log: start"
-      # set_interval(@resetCredentialTimer){
-      #   resetAwsCredential
-      # }
-      EM.run do
-        EM.add_periodic_timer(@resetCredentialTimer) do
-          resetAwsCredential
-        end
-      end
+      set_interval(@resetCredentialTimer){
+        resetAwsCredential
+      }
+      # EM.run do
+      #   EM.add_periodic_timer(@resetCredentialTimer) do
+      #     resetAwsCredential
+      #   end
+      # end
       resetAwsCredential
     end
 
