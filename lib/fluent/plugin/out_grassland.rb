@@ -4,7 +4,7 @@ module Fluent
 
     attr_accessor :random
     attr_accessor :kinesis
-    attr_accessor :stream_name, :access_key_id, :secret_access_key, :region, :sessionToken, :partitionKeys
+    attr_accessor :id, :stream_name, :access_key_id, :secret_access_key, :region, :sessionToken, :partitionKeys
 
     def initialize
       super
@@ -18,7 +18,7 @@ module Fluent
     end
 
     config_param :apiuri,               :string,  :default => 'https://grassland.biz/credentials'
-    config_param :id,                  :string,  :default => 'nil'
+    # config_param :id,                  :string,  :default => 'nil'
     config_param :key,                  :string,  :default => 'nil'
     config_param :debug,                :bool,    :default => false
     config_param :resetCredentialTimer, :integer, :default => 86400
@@ -72,6 +72,7 @@ module Fluent
 
     def setCredential()
       credential = get_json("#{@apiuri}?key=#{@key}")
+      @id = credential['id']
       @stream_name = credential['streamName']
       @access_key_id = credential['accessKeyId']
       @secret_access_key = credential['secretAccessKey']
