@@ -110,7 +110,7 @@ module Fluent
 
     def format(tag, time, record)
       # print(record)
-      ['dt', 'uid', 'd'].each do |key|
+      ['dt', 'd'].each do |key|
         unless record.has_key?(key)
           puts "input data error: '#{key}' is required"
           return ""
@@ -121,6 +121,9 @@ module Fluent
       end
       unless record.has_key?('cid')
         record['cid'] = @id
+      end
+      unless record.has_key?('uid')
+        record['uid'] = '0'
       end
 
       record['pk'] = record['cid'] + record['dt']
