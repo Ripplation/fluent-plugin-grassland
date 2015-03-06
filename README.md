@@ -34,6 +34,8 @@ fluent-gemでインストールします。
 注意： fluent-gemのパスは環境によって異なります。
 
     $ /usr/lib64/fluent/ruby/bin/fluent-gem install fluent-plugin-grassland
+    または、
+    $ /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-grassland
 
 ## Usage
 
@@ -58,7 +60,7 @@ __Fluentdの設定ファイルに以下を追記します。__
 
 __1. [fluent-logger-phpをインストール](https://github.com/fluent/fluent-logger-php)して下さい。__
 ```
-cat >> composer.json << EOF
+cat > composer.json << EOF
 {
     "require": {
         "fluent/logger": "v0.3.7"
@@ -93,7 +95,7 @@ $param = array(
 );
 $logger->post("grassland.data", $param);
 ```
-  
+
 ptを省略した場合、fluentdが受け付けた時間のUTC時刻として入力されます。  
 「任意のキー」は、グラフに表示される一つの要素になります。  
 例を以下に示します。  
