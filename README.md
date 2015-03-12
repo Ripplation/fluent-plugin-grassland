@@ -113,3 +113,42 @@ $param = array(
 );
 $logger->post("grassland.data", $param);
 ```
+
+### Node.js usage
+
+__1. [fluent-logger-nodeをインストール](https://github.com/fluent/fluent-logger-node)して下さい。__
+```
+cat > package.json << EOF
+{
+  "name": "grassland_test ",
+  "version": "0.0.1",
+  "dependencies": {
+    "fluent-logger": "0.2.6"
+  }
+}
+EOF
+npm install
+```
+
+__2. 実際にPHPに記載して下さい。__
+```
+var logger = require('fluent-logger');
+logger.configure('grassland', {
+   host: 'localhost',
+   port: 24224,
+   timeout: 3.0
+});
+
+/*** ここまでがfluent-loggerの前準備 ***/
+
+var param = {
+  dt: 'データID',
+  uid: '(optional)お客様のサービスのユーザID',
+  pt: '(optional)データの発生時刻(ISO 8601準拠の文字列 Ex. "2014-04-01T12:00:00+09:00")',
+  d: {
+    '任意のキー1': {'任意のキー2': '(int)集計を行いたいデータ'},
+    '(optional)任意のキー1': {'任意のキー2': '(int)集計を行いたいデータ'}
+  }
+};
+logger.emit('data', param);
+```
