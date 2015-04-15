@@ -51,7 +51,7 @@ __Fluentdの設定ファイルに以下を追記します。__
 <match grassland.**>
   type grassland
   key xxxxxxxxxxxxxxxx
-  flush_interval 3
+  flush_interval 5
 </match>
 ```
 
