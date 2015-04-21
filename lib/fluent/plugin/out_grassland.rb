@@ -59,7 +59,7 @@ module Fluent
       begin
         setCredential
         configure_aws
-        AWS.kinesis.client.put_record({
+        @kinesis.client.put_record({
           :stream_name   => @stream_name,
           :data          => "test",
           :partition_key => "#{random.rand(999)}"
@@ -144,7 +144,7 @@ module Fluent
             bufList[":#{data['pk']}"] += "#{data.to_json},"
           end
           if bufList[":#{data['pk']}"].bytesize >= 30720 then
-            AWS.kinesis.client.put_record({
+            @kinesis.client.put_record({
               :stream_name   => @stream_name,
               :data          => "["+bufList[":#{data['pk']}"].chop+"]",
               :partition_key => partitionKeys[random.rand(partitionKeys.length)]
@@ -155,7 +155,7 @@ module Fluent
         end
         dataList.each do |data|
           if bufList[":#{data['pk']}"] != nil then
-            AWS.kinesis.client.put_record({
+            @kinesis.client.put_record({
               :stream_name   => @stream_name,
               :data          => "["+bufList[":#{data['pk']}"].chop+"]",
               :partition_key => partitionKeys[random.rand(partitionKeys.length)]
@@ -187,7 +187,8 @@ module Fluent
         )
       end
 
-      AWS.config(options)
+      @kinesis = AWS::Kinesis.new(options)
+      # AWS.config(options)
     end
   end
 end
