@@ -78,7 +78,7 @@ module Fluent
       @secret_access_key = credential['secretAccessKey']
       @region = credential['region']
       @sessionToken = credential['SessionToken']
-      @partitionKeys = credential['SessionToken']
+      @partitionKeys = credential['partitionKeyList']
     end
 
     def get_json(location, limit = 3)
