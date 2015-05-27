@@ -5,8 +5,6 @@ Output filter plugin for Grassland
 [![Gem Version](https://badge.fury.io/rb/fluent-plugin-grassland.svg)](http://badge.fury.io/rb/fluent-plugin-grassland)
 
 ## Notice
-* このアプリケーションはまだテスト中です。
-
 本アプリケーションはFluentdのGrassland用プラグインです。
 [Fluentdをインストール](http://docs.fluentd.org/categories/installation)してからご利用下さい。
 
@@ -85,8 +83,7 @@ $logger = FluentLogger::open("localhost", "24224");
 
 $param = array(
 	'dt' => 'データID',
-	'uid' => '(optional)お客様のサービスのユーザID',
-	'pt' => '(optional)データの発生時刻(ISO 8601準拠の文字列, Ex. "2014-04-01T12:00:00+09:00")',
+	'pt' => '(optional)データの発生時刻(ISO 8601準拠の文字列、又はUnixtimestamp（秒）, Ex. "2014-04-01T12:00:00+09:00" or "1432698912")',
 	'd' => array(
     '任意のキー1' => array('任意のキー2' => '集計を行いたいデータ'),
 		'(optional)任意のキー1' => array('任意のキー2' => '集計を行いたいデータ'),
@@ -143,7 +140,6 @@ logger.configure('grassland', {
 
 var param = {
   dt: 'データID',
-  uid: '(optional)お客様のサービスのユーザID',
   pt: '(optional)データの発生時刻(ISO 8601準拠の文字列 Ex. "2014-04-01T12:00:00+09:00")',
   d: {
     '任意のキー1': {'任意のキー2': '(int)集計を行いたいデータ'},
