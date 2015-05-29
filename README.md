@@ -8,6 +8,9 @@ Output filter plugin for Grassland
 本アプリケーションはFluentdのGrassland用プラグインです。
 [Fluentdをインストール](http://docs.fluentd.org/categories/installation)してからご利用下さい。
 
+[GRASSLANDのWebサイトはこちら](https://grassland.biz/)
+
+
 ## Installation
 
 __Gemfileに記載する場合__
