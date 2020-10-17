@@ -8,7 +8,8 @@ module Fluent
 
     def initialize
       super
-      require 'aws-sdk-v1'
+      # require 'aws-sdk-v1'
+      require 'aws-sdk'
       require 'base64'
       require 'json'
       require 'logger'
@@ -187,7 +188,7 @@ module Fluent
         )
       end
 
-      @kinesis = AWS::Kinesis.new(options)
+      @kinesis = AWS::Kinesis::Client.new(options)
       # AWS.config(options)
     end
   end
