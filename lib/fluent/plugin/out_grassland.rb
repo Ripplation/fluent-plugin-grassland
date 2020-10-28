@@ -1,6 +1,9 @@
-module Fluent
-  class GrasslandOutput < Fluent::BufferedOutput
-    Fluent::Plugin.register_output('grassland', self)
+require 'syslog/logger'
+require 'fluent/plugin/output'
+
+module Fluent::Plugin
+  class GrasslandOutput < Fluent::Plugin::Output
+    Fluent::Plugin.register_output("grassland", self)
 
     attr_accessor :random
     attr_accessor :kinesis
@@ -16,6 +19,10 @@ module Fluent
       require 'net/http'
       require 'uri'
       @random = Random.new
+
+      log = Syslog::Logger.new 'grasslandplugin'
+      log.info 'grassland initialize'
+      # puts "grassland initialize"
     end
 
     config_param :apiuri,               :string,  :default => 'https://grassland.biz/credentials'
@@ -60,14 +67,14 @@ module Fluent
       begin
         setCredential
         configure_aws
-        @kinesis.client.put_record({
+        @kinesis.put_record({
           :stream_name   => @stream_name,
           :data          => "test",
           :partition_key => "#{random.rand(999)}"
         })
-        puts "fluentd: reset credential"
+        log.info "grassland: reset credential"
       rescue => e
-        puts [e.class, e].join(" : initialize error.")
+        log.info [e.class, e].join(" : initialize error.")
       end
     end
 
@@ -100,11 +107,11 @@ module Fluent
           warn "redirected to #{location}"
           get_json(location, limit - 1)
         else
-          puts [uri.to_s, response.value].join(" : ")
+          log.info [uri.to_s, response.value].join(" : ")
           # handle error
         end
       rescue => e
-        puts [uri.to_s, e.class, e].join(" : ")
+        log.info [uri.to_s, e.class, e].join(" : ")
         # handle error
       end
     end
@@ -113,7 +120,7 @@ module Fluent
       # print(record)
       ['dt', 'd'].each do |key|
         unless record.has_key?(key)
-          puts "input data error: '#{key}' is required"
+          log.info "input data error: '#{key}' is required"
           return ""
         end
       end
@@ -139,13 +146,15 @@ module Fluent
 
       begin
         dataList.each do |data|
+          # debug log
+          # log.info data.to_json
           if bufList[":#{data['pk']}"] == nil then
             bufList[":#{data['pk']}"] = "#{data.to_json},"
           else
             bufList[":#{data['pk']}"] += "#{data.to_json},"
           end
           if bufList[":#{data['pk']}"].bytesize >= 30720 then
-            @kinesis.client.put_record({
+            @kinesis.put_record({
               :stream_name   => @stream_name,
               :data          => "["+bufList[":#{data['pk']}"].chop+"]",
               :partition_key => partitionKeys[random.rand(partitionKeys.length)]
@@ -156,7 +165,7 @@ module Fluent
         end
         dataList.each do |data|
           if bufList[":#{data['pk']}"] != nil then
-            @kinesis.client.put_record({
+            @kinesis.put_record({
               :stream_name   => @stream_name,
               :data          => "["+bufList[":#{data['pk']}"].chop+"]",
               :partition_key => partitionKeys[random.rand(partitionKeys.length)]
@@ -166,7 +175,7 @@ module Fluent
           end
         end
       rescue
-        puts "error: put_record to grassland. maybe too many requests. few data dropped."
+        log.info "error: put_record to grassland. maybe too many requests. few data dropped."
       end
     end
 
@@ -188,8 +197,7 @@ module Fluent
         )
       end
 
-      @kinesis = AWS::Kinesis::Client.new(options)
-      # AWS.config(options)
+      @kinesis = Aws::Kinesis::Client.new(options)
     end
   end
-end
+  end
